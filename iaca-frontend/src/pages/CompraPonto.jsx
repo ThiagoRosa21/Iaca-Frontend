@@ -16,7 +16,7 @@ function CompraPonto() {
     const fetchResumo = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/descarte/ponto/${pontoId}/resumo`,
+          `http://192.168.15.124:8000/api/descarte/ponto/${pontoId}/resumo`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -33,7 +33,7 @@ function CompraPonto() {
  const handlePagamento = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/pagamento/pagar",
+      "http://192.168.15.124:8000/api/pagamento/pagar",
       {
         empresa_id: empresaId,
         valor_centavos: Math.round(resumo.valor_estimado_total * 100),

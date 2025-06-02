@@ -15,7 +15,7 @@ function ResumoMensalVendedor() {
     const fetchResumo = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/descarte/vendedor/${vendedorId}`,
+          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 

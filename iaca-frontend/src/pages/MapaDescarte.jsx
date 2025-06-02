@@ -34,14 +34,14 @@ function MapaDescarte() {
   useEffect(() => {
     const fetchPontos = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/empresa/pontos", {
+        const response = await axios.get("http://192.168.15.124:8000/api/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const pontosComResumo = await Promise.all(
           response.data.map(async (p) => {
             try {
-              const resumo = await axios.get(`http://localhost:8000/api/descarte/ponto/${p.id}/resumo`, {
+              const resumo = await axios.get(`http://192.168.15.124:8000/api/descarte/ponto/${p.id}/resumo`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               return { ...p, kg: resumo.data.total_kg };

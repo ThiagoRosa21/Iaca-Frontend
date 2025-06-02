@@ -16,7 +16,7 @@ function HistoricoDescartes() {
   useEffect(() => {
     const fetchDescartes = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/descarte/vendedor/${vendedorId}`, {
+        const response = await axios.get(`http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDescartes(response.data);

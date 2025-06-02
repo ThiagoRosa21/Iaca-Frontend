@@ -12,10 +12,10 @@ import VisualizarPDF from "./pages/VisualizarPDF.jsx";
 import CompraPonto from "./pages/CompraPonto.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import Welcome from "./pages/Welcome.jsx";
-import Sucesso from "./pages/Sucesso.jsx"; // ✅ IMPORTADO
+import Sucesso from "./pages/Sucesso.jsx";
 import HistoricoDescartes from "./pages/HistoricoDescartes.jsx";
 import ResumoMensalVendedor from "./pages/ResumoMensalVendedor.jsx";
-
+import VerificarEmail from "./pages/VerificarEmail";
 function App() {
   const [user, setUser] = useState(null);
 
@@ -31,13 +31,15 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Redirecionar a rota inicial para /cadastro */}
+        <Route path="/" element={<Navigate to="/cadastro" replace />} />
+
         {/* Rotas públicas */}
-        <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/sucesso" element={<Sucesso />} /> {/* ✅ NOVA ROTA */}
-
-        {/* Rotas privadas */}
+        <Route path="/sucesso" element={<Sucesso />} />
+        <Route path="/verificar-email" element={<VerificarEmail />} />
+        {/* Rotas privadas para empresas */}
         {user && user.role === "empresa" && (
           <>
             <Route path="/dashboard" element={<RequireAuth user={user}><EmpresaDashboard /></RequireAuth>} />
@@ -48,6 +50,7 @@ function App() {
           </>
         )}
 
+        {/* Rotas privadas para vendedores */}
         {user && user.role === "vendedor" && (
           <>
             <Route path="/dashboard" element={<RequireAuth user={user}><VendedorDashboard /></RequireAuth>} />
@@ -58,7 +61,7 @@ function App() {
           </>
         )}
 
-        {/* Redirecionamento padrão */}
+        {/* Redirecionamento para rota padrão baseada no login */}
         <Route
           path="*"
           element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}

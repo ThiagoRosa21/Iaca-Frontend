@@ -12,7 +12,7 @@ function HistoricoPagamentos() {
     const fetchPagamentos = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/pagamento/empresa/${empresaId}`,
+          `http://192.168.15.124:8000/api/pagamento/empresa/${empresaId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -29,7 +29,7 @@ function HistoricoPagamentos() {
   const pagar = async (id, valor) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/pagamento/pagar",
+        "http://192.168.15.124:8000/api/pagamento/pagar",
         { empresa_id: empresaId, valor_centavos: Math.round(valor * 100) },
         { headers: { Authorization: `Bearer ${token}` } }
       );

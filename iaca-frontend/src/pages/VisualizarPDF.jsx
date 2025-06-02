@@ -4,8 +4,8 @@ function VisualizarPDF() {
   const { tipo, id } = useParams();
 
   const urlBase = tipo === "nota"
-    ? `http://localhost:8000/api/pagamento/nota-fiscal/${id}`
-    : `http://localhost:8000/api/pagamento/comprovante/${id}`;
+    ? `http://192.168.15.124:8000/api/pagamento/nota-fiscal/${id}`
+    : `http://192.168.15.124:8000/api/pagamento/comprovante/${id}`;
 
   return (
     <div className="p-4">

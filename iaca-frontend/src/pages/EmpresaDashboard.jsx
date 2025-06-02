@@ -10,7 +10,7 @@ function EmpresaDashboard() {
   useEffect(() => {
     const fetchPontos = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/empresa/pontos", {
+        const response = await axios.get("http://192.168.15.124:8000/api/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);

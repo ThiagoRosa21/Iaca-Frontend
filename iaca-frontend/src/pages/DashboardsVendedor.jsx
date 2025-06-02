@@ -5,10 +5,11 @@ import {
   TileLayer,
   Marker,
   Popup,
-  useMap
+  useMap,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useNavigate } from "react-router-dom";
 
 // Ícone customizado para descarte
 const descarteIcon = new L.Icon({
@@ -31,15 +32,32 @@ function Dashboards_Vendedor() {
   const [totalRecebido, setTotalRecebido] = useState(0);
   const [pontos, setPontos] = useState([]);
   const [pontoSelecionado, setPontoSelecionado] = useState(null);
+  const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const vendedorId = JSON.parse(atob(token.split(".")[1])).id;
 
   useEffect(() => {
+    if (!token) {
+      alert("Você precisa estar logado.");
+      navigate("/login");
+      return;
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = JSON.parse(atob(token.split(".")[1]));
+    } catch (e) {
+      alert("Sessão inválida. Faça login novamente.");
+      navigate("/login");
+      return;
+    }
+
+    const vendedorId = decodedToken.id;
+
     const fetchDescartes = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/descarte/vendedor/${vendedorId}`,
+          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const descartes = response.data || [];
@@ -49,24 +67,34 @@ function Dashboards_Vendedor() {
         );
         setTotalRecebido(total);
       } catch (err) {
-        console.error("Erro ao buscar descartes:", err);
+        if (err.response?.status === 401) {
+          alert("Sua sessão expirou. Faça login novamente.");
+          navigate("/login");
+        } else {
+          console.error("Erro ao buscar descartes:", err);
+        }
       }
     };
 
     const fetchPontos = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/empresa/pontos`, {
+        const response = await axios.get(`http://192.168.15.124:8000/api/empresa/pontos`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
       } catch (err) {
-        console.error("Erro ao buscar pontos:", err);
+        if (err.response?.status === 401) {
+          alert("Sua sessão expirou. Faça login novamente.");
+          navigate("/login");
+        } else {
+          console.error("Erro ao buscar pontos:", err);
+        }
       }
     };
 
     fetchDescartes();
     fetchPontos();
-  }, []);
+  }, [navigate, token]);
 
   const handleSelectPonto = (id) => {
     const ponto = pontos.find((p) => p.id === parseInt(id));
@@ -74,8 +102,8 @@ function Dashboards_Vendedor() {
   };
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-card">
+    <div className="vendedor-dashboard-container">
+      <div className="vendedor-dashboard-card">
         <h1 className="dashboard-title">Dashboard do Vendedor</h1>
         <p className="dashboard-info">Total recebido no mês:</p>
         <p className="dashboard-total">R$ {totalRecebido.toFixed(2)}</p>
@@ -91,12 +119,12 @@ function Dashboards_Vendedor() {
         </select>
       </div>
 
-      <div style={{ height: "400px", width: "100%", marginTop: "20px" }}>
+      <div className="vendedor-mapa-container">
         <MapContainer
-          center={[-1.455, -48.49]} // Posição inicial (ex: Belém/PA)
+          center={[-1.455, -48.49]}
           zoom={13}
           scrollWheelZoom={true}
-          style={{ height: "100%", width: "100%" }}
+          className="mapa-vendedor"
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

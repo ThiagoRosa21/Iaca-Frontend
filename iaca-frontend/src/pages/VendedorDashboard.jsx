@@ -36,7 +36,7 @@ function Dashboards_Vendedor() {
     const fetchDescartes = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/descarte/vendedor/${vendedorId}`,
+          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const total = response.data.reduce(
@@ -51,7 +51,7 @@ function Dashboards_Vendedor() {
 
     const fetchPontos = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/empresa/pontos`, {
+        const response = await axios.get(`http://192.168.15.124:8000/api/empresa/pontos`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
@@ -71,26 +71,50 @@ function Dashboards_Vendedor() {
   };
 
   const solicitarDescarte = async () => {
-    if (!pontoSelecionado || !quantidade) return alert("Preencha todos os campos");
-    try {
-      await axios.post(
-        `http://localhost:8000/api/descarte/`,
-        {
-          vendedor_id: vendedorId,
-          ponto_id: parseInt(pontoSelecionado),
-          quantidade_kg: parseFloat(quantidade),
-          foto_url: "https://via.placeholder.com/100"
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Descarte registrado com sucesso!");
-      window.location.reload();
-    } catch (err) {
-      console.error("Erro ao registrar descarte:", err);
-      alert("Erro ao registrar descarte.");
-    }
-  };
+  if (!pontoSelecionado || !quantidade) {
+    return alert("Preencha todos os campos");
+  }
 
+  try {
+    await axios.post(
+      `http://192.168.15.124:8000/api/descarte/`,
+      {
+        vendedor_id: vendedorId,
+        ponto_id: parseInt(pontoSelecionado),
+        quantidade_kg: parseFloat(quantidade),
+        foto_url: "https://via.placeholder.com/100"
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    alert("✅ Descarte registrado com sucesso!");
+
+    // Atualizar total recebido
+    const response = await axios.get(
+      `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const total = response.data.reduce(
+      (acc, d) => acc + (d.valor_estimado || 0),
+      0
+    );
+    setTotalRecebido(total);
+
+    // Limpar campos
+    setQuantidade("");
+    setPontoSelecionado("");
+    setPontoSelecionadoObj(null);
+
+  } catch (err) {
+    if (err.response?.status === 401) {
+      alert("Sessão expirada. Faça login novamente.");
+      navigate("/login");
+    } else {
+      console.error("Erro ao registrar descarte:", err);
+      alert("❌ Erro ao registrar descarte.");
+    }
+  }
+};
   return (
     <>
       {/* Mapa fora do card */}

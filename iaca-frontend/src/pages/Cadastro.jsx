@@ -5,116 +5,96 @@ import axios from "axios";
 function Cadastro() {
   const [tipo, setTipo] = useState("empresa");
   const [form, setForm] = useState({});
+  const [erroCadastro, setErroCadastro] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, type, value, checked } = e.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setErroCadastro(""); // Limpa mensagem anterior
 
-    try {
-      const response = await axios.post("http://localhost:8000/api/auth/register", {
-        tipo,
-        dados: form,
-      });
+  try {
+    await axios.post("http://192.168.15.124:8000/api/auth/register", {
+      tipo,
+      dados: form,
+    });
 
-      alert(`Cadastro realizado com sucesso como ${tipo}!`);
-      navigate("/login");
-    } catch (err) {
-      alert("Erro ao cadastrar. Verifique os dados.");
-      console.error(err);
+    localStorage.setItem("email_para_verificar", form.email);
+    navigate("/verificar-email");
+
+  } catch (err) {
+    const detail = err.response?.data?.detail || "Erro ao cadastrar.";
+
+    if (detail.toLowerCase().includes("email")) {
+      setErroCadastro(`O e-mail "${form.email}" já está cadastrado.`);
+    } else if (detail.toLowerCase().includes("cpf")) {
+      setErroCadastro(`O CPF "${form.cpf}" já está cadastrado.`);
+    } else if (detail.toLowerCase().includes("cnpj")) {
+      setErroCadastro(`O CNPJ "${form.cnpj}" já está cadastrado.`);
+    } else {
+      setErroCadastro(detail);
     }
-  };
+
+    console.error(err);
+  }
+};
 
   return (
     <div className="cadastro-form">
       <h1 className="cadastro-title">Cadastro</h1>
-
+      {erroCadastro && (
+  <div style={{ color: "red", marginBottom: "10px" }}>{erroCadastro}</div>
+)}
       <form onSubmit={handleSubmit}>
+        {/* Tipo de usuário */}
         <div className="radio-group">
           <label>
-            <input
-              type="radio"
-              name="tipo"
-              value="empresa"
-              checked={tipo === "empresa"}
-              onChange={() => setTipo("empresa")}
-            />
+            <input type="radio" name="tipo" value="empresa" checked={tipo === "empresa"} onChange={() => setTipo("empresa")} />
             Empresa
           </label>
           <label>
-            <input
-              type="radio"
-              name="tipo"
-              value="vendedor"
-              checked={tipo === "vendedor"}
-              onChange={() => setTipo("vendedor")}
-            />
+            <input type="radio" name="tipo" value="vendedor" checked={tipo === "vendedor"} onChange={() => setTipo("vendedor")} />
             Vendedor
           </label>
         </div>
 
-        <input
-          name="nome"
-          placeholder="Nome"
-          onChange={handleChange}
-          required
-          className="cadastro-input"
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="E-mail"
-          onChange={handleChange}
-          required
-          className="cadastro-input"
-        />
-        <input
-          name="senha"
-          type="password"
-          placeholder="Senha"
-          onChange={handleChange}
-          required
-          className="cadastro-input"
-        />
+        {/* Campos comuns */}
+        <input name="nome" placeholder="Nome" onChange={handleChange} required className="cadastro-input" />
+        <input name="email" type="email" placeholder="E-mail" onChange={handleChange} required className="cadastro-input" />
+        <input name="senha" type="password" placeholder="Senha" onChange={handleChange} required className="cadastro-input" />
 
+        {/* Campos específicos */}
         {tipo === "empresa" && (
           <>
-            <input
-              name="cnpj"
-              placeholder="CNPJ"
-              onChange={handleChange}
-              required
-              className="cadastro-input"
-            />
-            <input
-              name="endereco"
-              placeholder="Endereço"
-              onChange={handleChange}
-              className="cadastro-input"
-            />
+            <input name="cnpj" placeholder="CNPJ" onChange={handleChange} required className="cadastro-input" />
+            <input name="telefone" placeholder="Telefone" onChange={handleChange} className="cadastro-input" />
+            <input name="endereco" placeholder="Endereço" onChange={handleChange} className="cadastro-input" />
+          </>
+        )}
+        {tipo === "vendedor" && (
+          <>
+            <input name="cpf" placeholder="CPF" onChange={handleChange} required className="cadastro-input" />
+            <input name="local_feira" placeholder="Local da Feira" onChange={handleChange} className="cadastro-input" />
+            <input name="telefone" placeholder="Telefone" onChange={handleChange} className="cadastro-input" />
           </>
         )}
 
-        {tipo === "vendedor" && (
-          <input
-            name="local_feira"
-            placeholder="Local da Feira"
-            onChange={handleChange}
-            required
-            className="cadastro-input"
-          />
-        )}
+        {/* Opções extras */}
+        <label>
+          <input type="checkbox" name="whatsapp" onChange={handleChange} /> Usa WhatsApp
+        </label>
+        <label>
+          <input type="checkbox" name="receber_info" onChange={handleChange} /> Receber informações
+        </label>
 
-        <button type="submit" className="cadastro-button">
-          Cadastrar
-        </button>
-
-        <p className="cadastro-link" onClick={() => navigate("/login")}>
-          Já tem conta? Faça login
-        </p>
+        {/* Botões */}
+        <button type="submit" className="cadastro-button">Cadastrar</button>
+        <p className="cadastro-link" onClick={() => navigate("/login")}>Já tem conta? Faça login</p>
       </form>
     </div>
   );
