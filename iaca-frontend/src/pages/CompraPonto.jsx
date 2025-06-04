@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
 function CompraPonto() {
   const { pontoId } = useParams();
   const [resumo, setResumo] = useState(null);
@@ -15,12 +19,9 @@ function CompraPonto() {
   useEffect(() => {
     const fetchResumo = async () => {
       try {
-        const response = await axios.get(
-          `http://192.168.15.124:8000/api/descarte/ponto/${pontoId}/resumo`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await api.get(`/descarte/ponto/${pontoId}/resumo`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setResumo(response.data);
       } catch (err) {
         console.error("Erro ao buscar resumo do ponto:", err);
@@ -30,25 +31,25 @@ function CompraPonto() {
     fetchResumo();
   }, [pontoId]);
 
- const handlePagamento = async () => {
-  try {
-    const response = await axios.post(
-      "http://192.168.15.124:8000/api/pagamento/pagar",
-      {
-        empresa_id: empresaId,
-        valor_centavos: Math.round(resumo.valor_estimado_total * 100),
-        ponto_id: pontoId // ✅ adicionado
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    window.location.href = response.data.checkout_url;
-  } catch (err) {
-    alert("Erro ao iniciar pagamento. Tente novamente.");
-    console.error(err);
-  }
-};
+  const handlePagamento = async () => {
+    try {
+      const response = await api.post(
+        "/pagamento/pagar",
+        {
+          empresa_id: empresaId,
+          valor_centavos: Math.round(resumo.valor_estimado_total * 100),
+          ponto_id: pontoId,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      window.location.href = response.data.checkout_url;
+    } catch (err) {
+      alert("Erro ao iniciar pagamento. Tente novamente.");
+      console.error(err);
+    }
+  };
 
   if (!resumo)
     return <p className="pagamento-carregando">Carregando dados do ponto...</p>;
