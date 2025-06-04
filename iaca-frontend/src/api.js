@@ -1,8 +1,8 @@
-// src/api.js
 import axios from "axios";
 
+// Pega a URL da API a partir da variável de ambiente
 const api = axios.create({
-  baseURL: "http://192.168.15.124:8000/api", // ajuste se usar outro host
+  baseURL: import.meta.env.VITE_API_URL, // agora dinâmico
 });
 
 // Adiciona o token automaticamente em cada requisição
