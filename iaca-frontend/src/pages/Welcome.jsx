@@ -9,7 +9,6 @@ export default function Welcome() {
     { titulo: "Sobre", rota: "/sobrenos" },
     { titulo: "Pontos", rota: "/sobre-pontos" },
     { titulo: "Selo Verde", rota: "/selo-verde" },
-    { titulo: "Integrantes", rota: "/integrantes" },
   ];
 
   return (
