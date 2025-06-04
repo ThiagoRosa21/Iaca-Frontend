@@ -681,3 +681,110 @@ button:hover {
     left: 0.5rem !important;
   }
 }
+
+
+.logo-section {
+  text-align: center;
+  margin: 2rem 1rem;
+}
+
+.logo-section img {
+  max-width: 150px;
+  margin-bottom: 1rem;
+}
+
+.logo-section .buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.logo-section button {
+  padding: 0.6rem 1.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.logo-section button:hover {
+  opacity: 0.9;
+}
+
+.logo-section .entrar {
+  background-color: #006400;
+  color: white;
+}
+
+.logo-section .cadastrar {
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+}
+
+.section-info {
+  background-color: #4e0a24;
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.section-info h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-info img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.section-info .highlight {
+  color: #fcd116;
+  font-weight: bold;
+  margin-top: 1rem;
+  line-height: 1.5;
+  font-size: 1.2rem;
+}
+
+.section-info p {
+  max-width: 800px;
+  margin: 1.5rem auto 0 auto;
+  font-size: 0.95rem;
+  text-align: justify;
+}
+
+footer {
+  background-color: #004d00;
+  color: white;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+footer h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+footer p {
+  margin: 0.3rem 0;
+}
+
+/* Responsivo */
+@media (min-width: 768px) {
+  .logo-section img {
+    max-width: 200px;
+  }
+
+  .section-info h2 {
+    font-size: 2rem;
+  }
+
+  .section-info p {
+    font-size: 1rem;
+  }
+}

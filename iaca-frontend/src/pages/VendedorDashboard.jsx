@@ -160,7 +160,7 @@ function Dashboards_Vendedor() {
             <button onClick={() => navigate("/historico-vendedor")}style={{ marginRight: "8px", background: "#4a0033", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", cursor: "pointer" }}>
               📋 Ver Histórico
             </button>
-            <button style={{ background: "#4a0033", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", cursor: "pointer" }}>
+            <button onClick={() => navigate("/ResumoMensalVendedor")} style={{ background: "#4a0033", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", cursor: "pointer" }}>
               📊 Ver Resumo
             </button>
           </div>

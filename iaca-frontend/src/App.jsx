@@ -16,6 +16,8 @@ import Sucesso from "./pages/Sucesso.jsx";
 import HistoricoDescartes from "./pages/HistoricoDescartes.jsx";
 import ResumoMensalVendedor from "./pages/ResumoMensalVendedor.jsx";
 import VerificarEmail from "./pages/VerificarEmail";
+import SobreNos from "./pages/sobrenos.jsx";
+import SobrePontos from "./pages/SobrePontos.jsx";
 function App() {
   const [user, setUser] = useState(null);
 
@@ -32,9 +34,12 @@ function App() {
     <Router>
       <Routes>
         {/* Redirecionar a rota inicial para /cadastro */}
-        <Route path="/" element={<Navigate to="/cadastro" replace />} />
+        <Route path="/" element={<Navigate to="/welcome" replace />} />
+        <Route path="/welcome" element={<Welcome />} />  {/* <- Adicionado aqui */}
 
-        {/* Rotas públicas */}
+         {/* Rotas públicas */}
+        <Route path="/sobrenos" element={<SobreNos />} />
+        <Route path="/sobre-pontos" element={<SobrePontos />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/sucesso" element={<Sucesso />} />
