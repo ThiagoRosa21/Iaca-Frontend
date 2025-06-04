@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api"; // ✅ usa a base segura
 import {
   BarChart,
   Bar,
@@ -29,10 +29,9 @@ function ResumoMensalVendedor() {
   useEffect(() => {
     const fetchResumo = async () => {
       try {
-        const response = await axios.get(
-          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await api.get(`/descarte/vendedor/${vendedorId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
         const totalValor = response.data.reduce(
           (acc, d) => acc + (d.valor_estimado || 0),
