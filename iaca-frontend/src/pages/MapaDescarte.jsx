@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import L from "leaflet";
-import axios from "axios";
 import { getDistance } from "geolib";
 import "leaflet/dist/leaflet.css";
-import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const defaultIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
@@ -34,26 +34,20 @@ function MapaDescarte() {
   useEffect(() => {
     const fetchPontos = async () => {
       try {
-        const response = await axios.get("http://192.168.15.124:8000/api/empresa/pontos", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const response = await api.get("/empresa/pontos");
         const pontosComResumo = await Promise.all(
           response.data.map(async (p) => {
             try {
-              const resumo = await axios.get(`http://192.168.15.124:8000/api/descarte/ponto/${p.id}/resumo`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
+              const resumo = await api.get(`/descarte/ponto/${p.id}/resumo`);
               return { ...p, kg: resumo.data.total_kg };
             } catch {
               return { ...p, kg: 0 };
             }
           })
         );
-
         setPontos(pontosComResumo);
       } catch (err) {
-        console.error("Erro ao buscar pontos de coleta:", err);
+        console.error("Erro ao buscar pontos:", err);
       }
     };
 
@@ -82,7 +76,6 @@ function MapaDescarte() {
         });
         return distAtual < distMaisPerto ? atual : maisPerto;
       });
-
       setMaisProximo(pontoMaisProximo);
     }
   }, [coordenadas, pontos]);
@@ -90,19 +83,16 @@ function MapaDescarte() {
   return (
     <div className="mapa-container">
       <h1 className="mapa-title">Locais de Descarte</h1>
-    <button
+      <button
         className="mapa-voltar-button"
         onClick={() => {
           const role = localStorage.getItem("role");
-          if (role === "empresa") {
-            navigate("/empresa");
-          } else {
-            navigate("/vendedor");
-          }
+          navigate(role === "empresa" ? "/empresa" : "/vendedor");
         }}
       >
         ⬅ Voltar ao Dashboard
       </button>
+
       <select
         className="mapa-select"
         onChange={(e) => {
@@ -123,17 +113,16 @@ function MapaDescarte() {
           <p><strong>Quantidade atual:</strong> {maisProximo.kg?.toFixed(2)} kg</p>
 
           {maisProximo.kg > 0 ? (
-           <button
-  onClick={() =>
-    navigate(`/compra/${maisProximo.id}`, {
-      state: { ponto_id: maisProximo.id }
-    })
-  }
-  className="mapa-button"
->
-  Ver detalhes e pagar
-</button>
-
+            <button
+              onClick={() =>
+                navigate(`/compra/${maisProximo.id}`, {
+                  state: { ponto_id: maisProximo.id },
+                })
+              }
+              className="mapa-button"
+            >
+              Ver detalhes e pagar
+            </button>
           ) : (
             <p className="mapa-alerta" style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
               ⚠️ Este ponto ainda não possui caroço de açaí disponível para compra.
