@@ -22,7 +22,7 @@ function Login({ setUser }) {
       form.append("username", email);
       form.append("password", senha);
 
-      const response = await api.post("/auth/login", form);
+      const response = await api.post("/auth/login", form); // 🔒 usa HTTPS se configurado no .env
       const token = response.data.access_token;
 
       const [, payload] = token.split(".");
@@ -40,42 +40,41 @@ function Login({ setUser }) {
   };
 
   return (
- <div className="login-container">
-  <img src={logo} alt="Logo Iacá" className="logo" />
+    <div className="login-container">
+      <img src={logo} alt="Logo Iacá" className="logo" />
 
-  <h2 className="login-title">
-    Login - {tipo === "vendedor" ? "Vendedor de Açaí" : "Empresa Reutilizadora"}
-  </h2>
+      <h2 className="login-title">
+        Login - {tipo === "vendedor" ? "Vendedor de Açaí" : "Empresa Reutilizadora"}
+      </h2>
 
-  <p className="login-subtitle">Insira seu e-mail e senha para continuar</p>
+      <p className="login-subtitle">Insira seu e-mail e senha para continuar</p>
 
-  <form onSubmit={handleLogin}>
-    <input
-      type="email"
-      placeholder="E-mail"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      required
-    />
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-    <input
-      type="password"
-      placeholder="Senha"
-      value={senha}
-      onChange={(e) => setSenha(e.target.value)}
-      required
-    />
+        <input
+          type="password"
+          placeholder="Senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          required
+        />
 
-    <button type="submit" className="login-button">
-      Entrar
-    </button>
-  </form>
+        <button type="submit" className="login-button">
+          Entrar
+        </button>
+      </form>
 
-  <p className="login-link" onClick={() => navigate("/cadastro")}>
-    Não tem conta? Cadastre-se
-  </p>
-</div>
-
+      <p className="login-link" onClick={() => navigate("/cadastro")}>
+        Não tem conta? Cadastre-se
+      </p>
+    </div>
   );
 }
 
