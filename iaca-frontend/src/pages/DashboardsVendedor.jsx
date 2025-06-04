@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   MapContainer,
   TileLayer,
@@ -10,6 +9,11 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
 
 // Ícone customizado para descarte
 const descarteIcon = new L.Icon({
@@ -33,7 +37,6 @@ function Dashboards_Vendedor() {
   const [pontos, setPontos] = useState([]);
   const [pontoSelecionado, setPontoSelecionado] = useState(null);
   const navigate = useNavigate();
-
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -56,10 +59,9 @@ function Dashboards_Vendedor() {
 
     const fetchDescartes = async () => {
       try {
-        const response = await axios.get(
-          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await api.get(`/descarte/vendedor/${vendedorId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const descartes = response.data || [];
         const total = descartes.reduce(
           (acc, d) => acc + (d.valor_estimado || 0),
@@ -78,7 +80,7 @@ function Dashboards_Vendedor() {
 
     const fetchPontos = async () => {
       try {
-        const response = await axios.get(`http://192.168.15.124:8000/api/empresa/pontos`, {
+        const response = await api.get("/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
