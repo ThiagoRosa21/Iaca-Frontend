@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// Criação do cliente API com URL segura
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
 function EmpresaDashboard() {
   const [pontos, setPontos] = useState([]);
   const navigate = useNavigate();
@@ -10,7 +15,7 @@ function EmpresaDashboard() {
   useEffect(() => {
     const fetchPontos = async () => {
       try {
-        const response = await axios.get("http://192.168.15.124:8000/api/empresa/pontos", {
+        const response = await api.get("/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
@@ -19,22 +24,18 @@ function EmpresaDashboard() {
       }
     };
     fetchPontos();
-  }, []);
+  }, [token]);
 
   return (
     <div className="empresa-dashboard-container">
       <div className="empresa-dashboard-card">
         <h1 className="empresa-dashboard-title">Dashboard da Empresa</h1>
-        <button
-  className="mapa-voltar-button"
-    onClick={() => navigate("/login")}
-    >
-    ⬅ Voltar ao Início
-    </button>
-        <button
-          className="empresa-button"
-          onClick={() => navigate("/mapa")}
-        >
+
+        <button className="mapa-voltar-button" onClick={() => navigate("/login")}>
+          ⬅ Voltar ao Início
+        </button>
+
+        <button className="empresa-button" onClick={() => navigate("/mapa")}>
           Ver Mapa de Pontos
         </button>
 
