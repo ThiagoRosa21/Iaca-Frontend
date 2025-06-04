@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const icon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
@@ -9,18 +11,25 @@ const icon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-const pontosExemplo = [
-  { id: 1, nome: "Feira da 25", lat: -1.455, lng: -48.49, endereco: "Tv. 25 de Setembro, Belém - PA" },
-  { id: 2, nome: "Feira da Pedreira", lat: -1.465, lng: -48.495, endereco: "Av. Pedro Miranda, Belém - PA" },
-];
-
 export default function SobrePontos() {
   const navigate = useNavigate();
+  const [pontos, setPontos] = useState([]);
+
+  useEffect(() => {
+    const fetchPontos = async () => {
+      try {
+        const response = await api.get("/empresa/pontos");
+        setPontos(response.data);
+      } catch (err) {
+        console.error("Erro ao buscar pontos de coleta:", err);
+      }
+    };
+
+    fetchPontos();
+  }, []);
 
   return (
     <div style={{ fontFamily: "Segoe UI, sans-serif", padding: "2rem", backgroundColor: "#f4f4f4", minHeight: "100vh" }}>
-
-
       <h1 style={{ color: "#4e0a24" }}>Pontos de Coleta de Caroço de Açaí</h1>
       <p style={{ maxWidth: "800px", lineHeight: 1.6 }}>
         Os pontos de coleta são locais estratégicos espalhados por Belém onde os feirantes podem descartar os caroços de açaí
@@ -34,7 +43,7 @@ export default function SobrePontos() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"
           />
-          {pontosExemplo.map((ponto) => (
+          {pontos.map((ponto) => (
             <Marker key={ponto.id} position={[ponto.lat, ponto.lng]} icon={icon}>
               <Popup>
                 <strong>{ponto.nome}</strong><br />
