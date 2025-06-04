@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
 function HistoricoVendas() {
   const [descartes, setDescartes] = useState([]);
   const token = localStorage.getItem("token");
@@ -13,12 +17,9 @@ function HistoricoVendas() {
   useEffect(() => {
     const fetchDescartes = async () => {
       try {
-        const response = await axios.get(
-          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await api.get(`/descarte/vendedor/${vendedorId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setDescartes(response.data);
       } catch (err) {
         console.error("Erro ao buscar histórico de vendas:", err);
@@ -26,7 +27,7 @@ function HistoricoVendas() {
     };
 
     fetchDescartes();
-  }, []);
+  }, [vendedorId]);
 
   return (
     <div className="p-8">
