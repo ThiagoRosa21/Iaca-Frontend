@@ -38,14 +38,14 @@ function MapaDescarte() {
   useEffect(() => {
     const fetchPontos = async () => {
       try {
-        const response = await api.get("/empresa/pontos", {
+        const response = await api.get("https://iaca-backend.onrender.com/api/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const pontosComResumo = await Promise.all(
           response.data.map(async (p) => {
             try {
-              const resumo = await api.get(`/descarte/ponto/${p.id}/resumo`, {
+              const resumo = await api.get(`https://iaca-backend.onrender.com/api/descarte/ponto/${p.id}/resumo`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               return { ...p, kg: resumo.data.total_kg };
