@@ -30,7 +30,7 @@ function HistoricoPagamentos() {
   useEffect(() => {
     const fetchPagamentos = async () => {
       try {
-        const response = await api.get(`/pagamento/empresa/${empresaId}`, {
+        const response = await api.get(`https://iaca-backend.onrender.com/api/pagamento/empresa/${empresaId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPagamentos(response.data);
