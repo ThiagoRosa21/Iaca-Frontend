@@ -22,7 +22,7 @@ function Login({ setUser }) {
       form.append("username", email);
       form.append("password", senha);
 
-      const response = await api.post("https://iaca-backend.onrender.com/api/auth/login", form); 
+      const response = await api.post("https://iaca-backend.onrender.com/api/auth/login", form);
       const token = response.data.access_token;
 
       if (!token) throw new Error("Token ausente");
