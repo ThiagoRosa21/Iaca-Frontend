@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "../assets/logo.png";
-import folha from "../assets/FOLHA IAÇÁ PNG.png";
 import { useNavigate } from "react-router-dom";
 
 export default function Welcome() {
@@ -8,7 +7,6 @@ export default function Welcome() {
   const cards = [
     { titulo: "Sobre", rota: "/sobrenos" },
     { titulo: "Pontos", rota: "/sobre-pontos" },
-    { titulo: "Selo Verde", rota: "/selo-verde" },
   ];
 
   return (
@@ -35,102 +33,127 @@ export default function Welcome() {
           overflow-x: hidden;
         }
 
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-          100% { transform: scale(1); }
-        }
-
-        @keyframes fadeUpZoom {
-          from { opacity: 0; transform: scale(0.95) translateY(40px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
         .content-wrapper {
           width: 100%;
           max-width: 1100px;
           margin: 0 auto;
-          padding: 0 clamp(0.5rem, 1vw, 1rem);
+          padding: 0 clamp(0.5rem, 2vw, 1rem);
         }
 
-        main {
-          padding-top: 90px;
+        h2, h3, h4 {
+          margin: 0;
         }
 
-        @media (max-width: 768px) {
-          header {
-            flex-direction: column;
-            text-align: center;
+        /* Notebooks e telas grandes (1024px e acima) */
+        @media (min-width: 1024px) {
+          .hero {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .video-container {
+            flex: 1 1 50%;
+            max-width: 600px;
+          }
+
+          .hero-text {
+            flex: 1 1 40%;
+            max-width: 500px;
+          }
+
+          .cards {
+            grid-template-columns: repeat(4, 1fr);
           }
         }
-    
-@media (max-width: 420px) {
-  header {
-    top: 0 !important;
-    position: relative !important;
-    padding: 0.5rem 0 !important;
-  }
 
-  .hero {
-    flex-direction: column !important;
-    margin-top: 0 !important;
-    padding: 1rem 0.5rem !important;
-    gap: 1.5rem !important;
-  }
+        /* Tablets (500px a 1023px) */
+        @media (max-width: 1023px) and (min-width: 500px) {
+          .hero {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+          }
 
-  .video-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    background-color: black;
-    border-radius: 10px;
-    overflow: hidden;
-    aspect-ratio: 16 / 9;
-  }
+          .video-container {
+            flex: 1 1 100%;
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+          }
 
-  iframe {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 16 / 9;
-    display: block;
-    border: none;
-  }
+          .hero-text {
+            flex: 1 1 100%;
+            max-width: 100%;
+            text-align: center;
+          }
 
-  main {
-    padding-top: 0 !important;
-  }
+          .cards {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+          }
+        }
 
-  h2 {
-    font-size: 1.4rem !important;
-    text-align: center;
-  }
+        /* Telas menores que 500px */
+        @media (max-width: 499px) {
+          header {
+            padding: 0.3rem 0 !important;
+            top: 0 !important; /* Garante que o header comece no topo */
+          }
 
-  p {
-    font-size: 1rem !important;
-    text-align: justify;
-    padding: 0 0.4rem;
-  }
+          header img {
+            height: clamp(30px, 7vw, 60px) !important;
+          }
 
-  button {
-    width: 100% !important;
-    font-size: 1rem !important;
-    padding: 0.8rem !important;
-    margin-top: 1rem !important;
-  }
+          section[style*="background-color: #4e0a24"] {
+            padding: 0.8rem 0 !important;
+            top: 0 !important; /* Remove o top fixo da section */
+            padding-top: 60px !important; /* Adiciona padding-top para compensar a altura do header */
+          }
 
-  .cards {
-    grid-template-columns: 1fr !important;
-    gap: 1rem !important;
-  }
-}
+          .hero {
+            padding: 0.8rem 0.3rem !important;
+            gap: 0.8rem !important;
+            margin-top: 0 !important;
+            margin-bottom: 1rem !important;
+          }
 
+          .video-container {
+            border-radius: 8px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+          }
+
+          iframe {
+            width: 100% !important;
+            height: auto !important;
+            aspect-ratio: 16 / 9 !important;
+          }
+
+          .hero-text {
+            text-align: center !important;
+          }
+
+          h2 {
+            font-size: 1.2rem !important;
+            margin-bottom: 0.6rem !important;
+          }
+
+          p {
+            font-size: 0.8rem !important;
+            line-height: 1.4 !important;
+            margin-bottom: 0.6rem !important;
+          }
+
+          button {
+            font-size: 0.9rem !important;
+            padding: 0.6rem !important;
+            margin: 0.4rem 0 !important;
+            border-radius: 6px !important;
+          }
+        }
       `}</style>
 
-  
       <header
         style={{
           backgroundColor: "#fcd116",
@@ -161,17 +184,11 @@ export default function Welcome() {
         </div>
       </header>
 
-     
       <main>
-      
-        <section style={{ backgroundColor: "#4e0a24", color: "#fff", padding: "2rem 0" }}>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-                    <br></br>
-          <br></br>
+        <section style={{ backgroundColor: "#4e0a24", color: "#fff", padding: "2rem 0", top: "40px" }}>
+       
           <div className="content-wrapper" style={{ animation: "fadeIn 1s ease-in-out" }}>
+            <br></br><br></br><br></br><br></br>
             <div
               className="hero"
               style={{
@@ -185,7 +202,6 @@ export default function Welcome() {
                 animation: "fadeUpZoom 1.2s ease-out forwards",
               }}
             >
-              
               <div
                 className="video-container"
                 style={{
@@ -195,8 +211,7 @@ export default function Welcome() {
                   overflow: "hidden",
                   borderRadius: "12px",
                 }}
-              >
-             
+              ><br></br><br></br><br></br><br></br>
                 <iframe
                   style={{
                     width: "100%",
@@ -210,8 +225,7 @@ export default function Welcome() {
                 />
               </div>
 
-             
-              <div style={{ flex: "1 1 300px", maxWidth: "500px", textAlign: "left" }}>
+              <div className="hero-text" style={{ flex: "1 1 300px", maxWidth: "500px", textAlign: "left" }}>
                 <h2 style={{ fontSize: "1.8rem", marginBottom: "1rem" }}>O que é o Iaçá?</h2>
                 <p style={{ fontSize: "1rem", lineHeight: 1.6 }}>
                   O Iaçá é uma solução sustentável criada por estudantes do CESUPA para combater o descarte inadequado
@@ -221,7 +235,6 @@ export default function Welcome() {
                 <button
                   onClick={() => navigate("/cadastro")}
                   style={{
-                    marginTop: "1.5rem",
                     backgroundColor: "#1d7225",
                     color: "#fff",
                     padding: "0.7rem 1.5rem",
@@ -230,7 +243,6 @@ export default function Welcome() {
                     fontWeight: "bold",
                     border: "none",
                     cursor: "pointer",
-                    animation: "pulse 2s infinite",
                   }}
                 >
                   FAZER CADASTRO
@@ -240,7 +252,6 @@ export default function Welcome() {
           </div>
         </section>
 
-      
         <section style={{ backgroundColor: "#fff", padding: "2rem 0", textAlign: "center" }}>
           <div className="content-wrapper">
             <h3 style={{ fontSize: "clamp(0.9rem, 1.8vw, 1rem)", marginBottom: "1rem", color: "#000" }}>
@@ -291,7 +302,6 @@ export default function Welcome() {
           </div>
         </section>
 
-        {/* Footer */}
         <footer style={{ backgroundColor: "#2e7d32", color: "#fff", padding: "1rem 0", textAlign: "center", width: "100%" }}>
           <div className="content-wrapper">
             <h4 style={{ fontSize: "clamp(0.8rem, 1.5vw, 0.9rem)", marginBottom: "0.6rem" }}>Contato</h4>
