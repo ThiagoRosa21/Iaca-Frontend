@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://iaca-backend.onrender.com/api",
+  baseURL: "https://iaca-backend.onrender.com",
 });
 
 
