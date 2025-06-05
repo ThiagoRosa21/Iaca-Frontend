@@ -36,7 +36,7 @@ function Dashboards_Vendedor() {
     const fetchDescartes = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
+          `https://iaca-backend.onrender.com/api/descarte/vendedor/${vendedorId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const total = response.data.reduce(
@@ -51,7 +51,7 @@ function Dashboards_Vendedor() {
 
     const fetchPontos = async () => {
       try {
-        const response = await axios.get(`http://192.168.15.124:8000/api/empresa/pontos`, {
+        const response = await axios.get(`https://iaca-backend.onrender.com/api/empresa/pontos`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
@@ -71,53 +71,51 @@ function Dashboards_Vendedor() {
   };
 
   const solicitarDescarte = async () => {
-  if (!pontoSelecionado || !quantidade) {
-    return alert("Preencha todos os campos");
-  }
-
-  try {
-    await axios.post(
-      `http://192.168.15.124:8000/api/descarte/`,
-      {
-        vendedor_id: vendedorId,
-        ponto_id: parseInt(pontoSelecionado),
-        quantidade_kg: parseFloat(quantidade),
-        foto_url: "https://via.placeholder.com/100"
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    alert("✅ Descarte registrado com sucesso!");
-
-    // Atualizar total recebido
-    const response = await axios.get(
-      `http://192.168.15.124:8000/api/descarte/vendedor/${vendedorId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const total = response.data.reduce(
-      (acc, d) => acc + (d.valor_estimado || 0),
-      0
-    );
-    setTotalRecebido(total);
-
-    // Limpar campos
-    setQuantidade("");
-    setPontoSelecionado("");
-    setPontoSelecionadoObj(null);
-
-  } catch (err) {
-    if (err.response?.status === 401) {
-      alert("Sessão expirada. Faça login novamente.");
-      navigate("/login");
-    } else {
-      console.error("Erro ao registrar descarte:", err);
-      alert("❌ Erro ao registrar descarte.");
+    if (!pontoSelecionado || !quantidade) {
+      return alert("Preencha todos os campos");
     }
-  }
-};
+
+    try {
+      await axios.post(
+        `https://iaca-backend.onrender.com/api/descarte/`,
+        {
+          vendedor_id: vendedorId,
+          ponto_id: parseInt(pontoSelecionado),
+          quantidade_kg: parseFloat(quantidade),
+          foto_url: "https://via.placeholder.com/100"
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("✅ Descarte registrado com sucesso!");
+
+      const response = await axios.get(
+        `https://iaca-backend.onrender.com/api/descarte/vendedor/${vendedorId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const total = response.data.reduce(
+        (acc, d) => acc + (d.valor_estimado || 0),
+        0
+      );
+      setTotalRecebido(total);
+
+      setQuantidade("");
+      setPontoSelecionado("");
+      setPontoSelecionadoObj(null);
+
+    } catch (err) {
+      if (err.response?.status === 401) {
+        alert("Sessão expirada. Faça login novamente.");
+        navigate("/login");
+      } else {
+        console.error("Erro ao registrar descarte:", err);
+        alert("❌ Erro ao registrar descarte.");
+      }
+    }
+  };
+
   return (
     <>
-      {/* Mapa fora do card */}
       <div style={{ backgroundColor: "#ffb800", padding: "20px" }}>
         <MapContainer
           center={[-1.455, -48.49]}
@@ -140,7 +138,6 @@ function Dashboards_Vendedor() {
         </MapContainer>
       </div>
 
-      {/* Card separado abaixo */}
       <div style={{ backgroundColor: "#ffb800", minHeight: "100vh", paddingBottom: "60px" }}>
         <div style={{
           backgroundColor: "#fff5dd",
@@ -157,7 +154,7 @@ function Dashboards_Vendedor() {
           </button>
 
           <div style={{ marginBottom: "16px" }}>
-            <button onClick={() => navigate("/historico-vendedor")}style={{ marginRight: "8px", background: "#4a0033", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", cursor: "pointer" }}>
+            <button onClick={() => navigate("/historico-vendedor")} style={{ marginRight: "8px", background: "#4a0033", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", cursor: "pointer" }}>
               📋 Ver Histórico
             </button>
             <button onClick={() => navigate("/ResumoMensalVendedor")} style={{ background: "#4a0033", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", cursor: "pointer" }}>
