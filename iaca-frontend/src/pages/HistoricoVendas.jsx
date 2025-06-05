@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -7,12 +9,24 @@ const api = axios.create({
 
 function HistoricoVendas() {
   const [descartes, setDescartes] = useState([]);
+  const [erro, setErro] = useState("");
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  const vendedorId = (() => {
+  if (!token) {
+    navigate("/login");
+    return null;
+  }
+
+  let vendedorId;
+  try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.id;
-  })();
+    vendedorId = payload.id;
+  } catch (e) {
+    alert("Sessão inválida. Faça login novamente.");
+    navigate("/login");
+    return null;
+  }
 
   useEffect(() => {
     const fetchDescartes = async () => {
@@ -22,29 +36,33 @@ function HistoricoVendas() {
         });
         setDescartes(response.data);
       } catch (err) {
+        setErro("Erro ao buscar histórico de vendas.");
         console.error("Erro ao buscar histórico de vendas:", err);
       }
     };
 
     fetchDescartes();
-  }, [vendedorId]);
+  }, [vendedorId, token]);
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Histórico de Descartes</h1>
 
-      {descartes.length === 0 && <p>Nenhum descarte registrado ainda.</p>}
+      {erro && <p className="text-red-500 mb-4">{erro}</p>}
+      {descartes.length === 0 && !erro && (
+        <p>Nenhum descarte registrado ainda.</p>
+      )}
 
       {descartes.map((d) => (
         <div key={d.id} className="border p-4 mb-4 rounded shadow">
-          <p><strong>Data:</strong> {new Date(d.data_hora).toLocaleString()}</p>
-          <p><strong>Quantidade:</strong> {d.quantidade_kg} kg</p>
-          <p><strong>Ponto:</strong> {d.ponto.nome}</p>
+          <p><strong>📅 Data:</strong> {new Date(d.data_hora).toLocaleString()}</p>
+          <p><strong>⚖️ Quantidade:</strong> {d.quantidade_kg} kg</p>
+          <p><strong>📍 Ponto:</strong> {d.ponto.nome}</p>
           {d.foto_url && (
             <img
               src={d.foto_url}
               alt={`Descarte ${d.id}`}
-              className="w-32 h-32 object-cover mt-2"
+              className="w-32 h-32 object-cover mt-2 rounded"
             />
           )}
         </div>
