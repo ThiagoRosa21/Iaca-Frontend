@@ -1,125 +1,179 @@
-import { useEffect, useState } from "react";
-import api from "../api"; // ✅ usa a base segura
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend
-} from "recharts";
+import { useEffect, useRef, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
+import axios from "axios";
+import { getDistance } from "geolib";
+import "leaflet/dist/leaflet.css";
+import { useNavigate } from "react-router-dom";
 
-const COLORS = ["#4caf50", "#2196f3", "#ff9800", "#f44336"];
+const defaultIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
-function ResumoMensalVendedor() {
-  const [valorTotal, setValorTotal] = useState(0);
-  const [qtdDescarte, setQtdDescarte] = useState(0);
-  const [graficoDados, setGraficoDados] = useState([]);
-  const token = localStorage.getItem("token");
+const api = axios.create({
+  baseURL: "https://iaca-backend.onrender.com/api",
+});
 
-  const vendedorId = (() => {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.id;
-  })();
+function FlyToPonto({ ponto }) {
+  const map = useMap();
 
   useEffect(() => {
-    const fetchResumo = async () => {
+    if (ponto) {
+      map.flyTo([ponto.lat, ponto.lng], 16, { duration: 1.2 });
+    }
+  }, [ponto, map]);
+
+  return null;
+}
+
+function MapaDescarte() {
+  const [pontos, setPontos] = useState([]);
+  const [maisProximo, setMaisProximo] = useState(null);
+  const [coordenadas, setCoordenadas] = useState(null);
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPontos = async () => {
       try {
-        const response = await api.get(`/descarte/vendedor/${vendedorId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await api.get("/empresa/pontos", {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        const totalValor = response.data.reduce(
-          (acc, d) => acc + (d.valor_estimado || 0),
-          0
+        const pontosComResumo = await Promise.all(
+          response.data.map(async (p) => {
+            try {
+              const resumo = await api.get(`/descarte/ponto/${p.id}/resumo`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              return { ...p, kg: resumo.data.total_kg };
+            } catch {
+              return { ...p, kg: 0 };
+            }
+          })
         );
 
-        const agrupadoPorData = {};
-        response.data.forEach((d) => {
-          let data = "Desconhecido";
-          if (d.data && !isNaN(new Date(d.data))) {
-            data = new Date(d.data).toLocaleDateString("pt-BR", {
-              month: "short",
-              day: "numeric"
-            });
-          }
-          agrupadoPorData[data] = (agrupadoPorData[data] || 0) + (d.valor_estimado || 0);
-        });
-
-        const dadosParaGrafico = Object.entries(agrupadoPorData).map(([data, valor]) => ({
-          name: data,
-          valor: parseFloat(valor.toFixed(2))
-        }));
-
-        setValorTotal(totalValor);
-        setQtdDescarte(response.data.length);
-        setGraficoDados(dadosParaGrafico);
+        setPontos(pontosComResumo);
       } catch (err) {
-        console.error("Erro ao buscar resumo do vendedor:", err);
+        console.error("Erro ao buscar pontos de coleta:", err);
       }
     };
 
-    fetchResumo();
+    const pegarLocalizacao = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          setCoordenadas({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        });
+      }
+    };
+
+    pegarLocalizacao();
+    fetchPontos();
   }, []);
 
+  useEffect(() => {
+    if (coordenadas && pontos.length > 0 && !maisProximo) {
+      const pontoMaisProximo = pontos.reduce((maisPerto, atual) => {
+        const distMaisPerto = getDistance(coordenadas, {
+          latitude: maisPerto.lat,
+          longitude: maisPerto.lng,
+        });
+        const distAtual = getDistance(coordenadas, {
+          latitude: atual.lat,
+          longitude: atual.lng,
+        });
+        return distAtual < distMaisPerto ? atual : maisPerto;
+      });
+
+      setMaisProximo(pontoMaisProximo);
+    }
+  }, [coordenadas, pontos]);
+
   return (
-    <div className="p-6 font-sans bg-yellow-400 min-h-screen">
-      <div className="max-w-5xl mx-auto">
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h1 className="text-2xl font-bold text-purple-900 mb-4">Resumo Mensal</h1>
-          <p className="text-lg mb-2">💰 <strong>Total estimado recebido:</strong> R$ {valorTotal.toFixed(2)}</p>
-          <p className="text-lg">📦 <strong>Quantidade de descartes realizados:</strong> {qtdDescarte}</p>
-        </div>
+    <div className="mapa-container">
+      <h1 className="mapa-title">Locais de Descarte</h1>
+      <button
+        className="mapa-voltar-button"
+        onClick={() => {
+          const role = localStorage.getItem("role");
+          if (role === "empresa") {
+            navigate("/empresa");
+          } else {
+            navigate("/vendedor");
+          }
+        }}
+      >
+        ⬅ Voltar ao Dashboard
+      </button>
+      <select
+        className="mapa-select"
+        onChange={(e) => {
+          const selected = pontos.find(p => p.id === parseInt(e.target.value));
+          if (selected) setMaisProximo(selected);
+        }}
+      >
+        <option value="">Selecione um ponto de descarte</option>
+        {pontos.map(p => (
+          <option key={p.id} value={p.id}>{p.nome}</option>
+        ))}
+      </select>
 
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-purple-900 mb-4">Valor por Dia</h2>
-          {graficoDados.length === 0 ? (
-            <p className="text-gray-600 text-center">Nenhum dado disponível para exibir o gráfico de barras.</p>
+      {maisProximo && (
+        <div className="mapa-info-box">
+          <p><strong>Ponto selecionado:</strong> {maisProximo.nome}</p>
+          <p><strong>Endereço:</strong> {maisProximo.endereco}</p>
+          <p><strong>Quantidade atual:</strong> {maisProximo.kg?.toFixed(2)} kg</p>
+
+          {maisProximo.kg > 0 ? (
+            <button
+              onClick={() =>
+                navigate(`/compra/${maisProximo.id}`, {
+                  state: { ponto_id: maisProximo.id }
+                })
+              }
+              className="mapa-button"
+            >
+              Ver detalhes e pagar
+            </button>
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={graficoDados} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="valor" fill="#4caf50" />
-              </BarChart>
-            </ResponsiveContainer>
+            <p className="mapa-alerta" style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
+              ⚠️ Este ponto ainda não possui caroço de açaí disponível para compra.
+            </p>
           )}
         </div>
+      )}
 
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-semibold text-purple-900 mb-4">Distribuição dos Ganhos</h2>
-          {graficoDados.length === 0 ? (
-            <p className="text-gray-600 text-center">Nenhum dado disponível para exibir o gráfico de pizza.</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={graficoDados}
-                  dataKey="valor"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label
+      <div className="mapa-box">
+        <MapContainer
+          center={coordenadas || [-1.455, -48.49]}
+          zoom={13}
+          style={{ height: "600px", width: "100%", borderRadius: "12px" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; OpenStreetMap contributors"
+          />
+          {maisProximo && <FlyToPonto ponto={maisProximo} />}
+          {pontos.map((ponto) => (
+            <Marker key={ponto.id} position={[ponto.lat, ponto.lng]} icon={defaultIcon}>
+              <Popup>
+                <strong>{ponto.nome}</strong><br />
+                {ponto.endereco}<br />
+                <button
+                  onClick={() => navigate(`/compra/${ponto.id}`)}
+                  className="mapa-popup-button"
                 >
-                  {graficoDados.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
-        </div>
+                  Ver detalhes
+                </button>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
     </div>
   );
 }
 
-export default ResumoMensalVendedor;
+export default MapaDescarte;
