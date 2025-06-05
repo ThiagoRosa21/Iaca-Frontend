@@ -52,7 +52,7 @@ function Cadastro() {
           };
 
     try {
-      await api.post("/api/auth/register", {
+      await api.post("https://iaca-backend.onrender.com/api/auth/register", {
         tipo,
         dados,
       });
