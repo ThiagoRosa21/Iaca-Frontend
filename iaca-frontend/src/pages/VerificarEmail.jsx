@@ -19,7 +19,7 @@ export default function VerificarEmail() {
 
   const verificarCodigo = async () => {
     try {
-      const response = await axios.post("http://192.168.15.124:8000/api/auth/verificar-email", {
+      const response = await axios.post("https://iaca-backend.onrender.com/api/auth/verificar-email", {
         email,
         codigo,
       });
@@ -35,7 +35,7 @@ export default function VerificarEmail() {
 
   const reenviarCodigo = async () => {
     try {
-      await axios.post("http://192.168.15.124:8000/api/auth/reenviar-codigo", { email });
+      await axios.post("https://iaca-backend.onrender.com/api/auth/reenviar-codigo", { email });
       setMensagem("📧 Novo código enviado para seu e-mail!");
     } catch (err) {
       setMensagem("❌ " + (err.response?.data.detail || "Erro ao reenviar código"));
