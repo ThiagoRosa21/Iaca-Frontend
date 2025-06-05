@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { useNavigate } from "react-router-dom";
 import L from "leaflet";
+import axios from "axios";
 import { getDistance } from "geolib";
 import "leaflet/dist/leaflet.css";
-import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const defaultIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
+});
+
+const api = axios.create({
+  baseURL: "https://iaca-backend.onrender.com/api",
 });
 
 function FlyToPonto({ ponto }) {
@@ -34,20 +38,26 @@ function MapaDescarte() {
   useEffect(() => {
     const fetchPontos = async () => {
       try {
-        const response = await api.get("/empresa/pontos");
+        const response = await api.get("/empresa/pontos", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         const pontosComResumo = await Promise.all(
           response.data.map(async (p) => {
             try {
-              const resumo = await api.get(`/descarte/ponto/${p.id}/resumo`);
+              const resumo = await api.get(`/descarte/ponto/${p.id}/resumo`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
               return { ...p, kg: resumo.data.total_kg };
             } catch {
               return { ...p, kg: 0 };
             }
           })
         );
+
         setPontos(pontosComResumo);
       } catch (err) {
-        console.error("Erro ao buscar pontos:", err);
+        console.error("Erro ao buscar pontos de coleta:", err);
       }
     };
 
@@ -76,6 +86,7 @@ function MapaDescarte() {
         });
         return distAtual < distMaisPerto ? atual : maisPerto;
       });
+
       setMaisProximo(pontoMaisProximo);
     }
   }, [coordenadas, pontos]);
@@ -87,12 +98,15 @@ function MapaDescarte() {
         className="mapa-voltar-button"
         onClick={() => {
           const role = localStorage.getItem("role");
-          navigate(role === "empresa" ? "/empresa" : "/vendedor");
+          if (role === "empresa") {
+            navigate("/empresa");
+          } else {
+            navigate("/vendedor");
+          }
         }}
       >
         ⬅ Voltar ao Dashboard
       </button>
-
       <select
         className="mapa-select"
         onChange={(e) => {
@@ -116,7 +130,7 @@ function MapaDescarte() {
             <button
               onClick={() =>
                 navigate(`/compra/${maisProximo.id}`, {
-                  state: { ponto_id: maisProximo.id },
+                  state: { ponto_id: maisProximo.id }
                 })
               }
               className="mapa-button"
