@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-});
+import api from "../api";
 
 function CompraPonto() {
   const { pontoId } = useParams();
@@ -19,7 +15,7 @@ function CompraPonto() {
   useEffect(() => {
     const fetchResumo = async () => {
       try {
-        const response = await api.get(`/descarte/ponto/${pontoId}/resumo`, {
+        const response = await api.get(`/api/descarte/ponto/${pontoId}/resumo`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setResumo(response.data);
@@ -34,7 +30,7 @@ function CompraPonto() {
   const handlePagamento = async () => {
     try {
       const response = await api.post(
-        "/pagamento/pagar",
+        "/api/pagamento/pagar",
         {
           empresa_id: empresaId,
           valor_centavos: Math.round(resumo.valor_estimado_total * 100),
