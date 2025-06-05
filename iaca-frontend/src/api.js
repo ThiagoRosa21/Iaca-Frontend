@@ -1,20 +1,15 @@
 import axios from "axios";
 
-// Pega a URL da API a partir da variável de ambiente
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // agora dinâmico
+  baseURL: import.meta.env.VITE_API_URL || "https://iaca-backend.onrender.com/api",
 });
 
-// Adiciona o token automaticamente em cada requisição
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Redireciona se receber erro 401
 api.interceptors.response.use(
   (res) => res,
   (err) => {
