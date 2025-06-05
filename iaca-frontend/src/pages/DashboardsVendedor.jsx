@@ -59,7 +59,7 @@ function Dashboards_Vendedor() {
 
     const fetchDescartes = async () => {
       try {
-        const response = await api.get(`/descarte/vendedor/${vendedorId}`, {
+        const response = await api.get(`https://iaca-backend.onrender.com/descarte/vendedor/${vendedorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const descartes = response.data || [];
