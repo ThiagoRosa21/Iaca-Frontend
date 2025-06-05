@@ -123,6 +123,7 @@ export default function Welcome() {
             border-radius: 8px !important;
             max-width: 100% !important;
             width: 100% !important;
+            min-height: 200px !important;
           }
 
           iframe {
@@ -186,7 +187,7 @@ export default function Welcome() {
       </header>
 
       <main>
-        <section style={{ backgroundColor: "#4e0a24", color: "#fff", padding: "2rem 0", top: "40px" }}>
+        <section style={{ backgroundColor: "#4e0a24", color: "#fff", padding: "2rem 0", top: "100px" }}>
        
           <div className="content-wrapper" style={{ animation: "fadeIn 1s ease-in-out" }}>
             <br></br><br></br><br></br><br></br><br></br><br></br>
@@ -208,11 +209,11 @@ export default function Welcome() {
                 style={{
                   flex: "1 1 500px",
                   maxWidth: "600px",
-                  aspectRatio: "16 / 9",
+                  aspectRatio: "15/ 13",
                   overflow: "hidden",
                   borderRadius: "12px",
                 }}
-              ><br></br><br></br><br></br><br></br><br></br>
+              ><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
                 <iframe
                   style={{
                     width: "100%",
