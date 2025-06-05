@@ -31,7 +31,7 @@ function HistoricoVendas() {
   useEffect(() => {
     const fetchDescartes = async () => {
       try {
-        const response = await api.get(`/descarte/vendedor/${vendedorId}`, {
+        const response = await api.get(`https://iaca-backend.onrender.com/api/descarte/vendedor/${vendedorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDescartes(response.data);
