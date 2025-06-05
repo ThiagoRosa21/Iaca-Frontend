@@ -4,7 +4,18 @@ import api from "../api";
 
 function Cadastro() {
   const [tipo, setTipo] = useState("empresa");
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({
+    nome: "",
+    email: "",
+    senha: "",
+    cnpj: "",
+    telefone: "",
+    endereco: "",
+    cpf: "",
+    local_feira: "",
+    whatsapp: false,
+    receber_info: false,
+  });
   const [erroCadastro, setErroCadastro] = useState("");
   const navigate = useNavigate();
 
@@ -17,15 +28,37 @@ function Cadastro() {
     e.preventDefault();
     setErroCadastro("");
 
+    const dados =
+      tipo === "empresa"
+        ? {
+            nome: form.nome,
+            email: form.email,
+            senha: form.senha,
+            cnpj: form.cnpj,
+            telefone: form.telefone,
+            endereco: form.endereco,
+            whatsapp: form.whatsapp,
+            receber_info: form.receber_info,
+          }
+        : {
+            nome: form.nome,
+            email: form.email,
+            senha: form.senha,
+            cpf: form.cpf,
+            local_feira: form.local_feira,
+            telefone: form.telefone,
+            whatsapp: form.whatsapp,
+            receber_info: form.receber_info,
+          };
+
     try {
       await api.post("/auth/register", {
         tipo,
-        dados: form,
+        dados,
       });
 
       localStorage.setItem("email_para_verificar", form.email);
       navigate("/verificar-email");
-
     } catch (err) {
       const detail = err.response?.data?.detail || "Erro ao cadastrar.";
 
@@ -77,6 +110,7 @@ function Cadastro() {
           name="nome"
           placeholder="Nome"
           onChange={handleChange}
+          value={form.nome}
           required
           className="cadastro-input"
         />
@@ -85,6 +119,7 @@ function Cadastro() {
           type="email"
           placeholder="E-mail"
           onChange={handleChange}
+          value={form.email}
           required
           className="cadastro-input"
         />
@@ -93,6 +128,7 @@ function Cadastro() {
           type="password"
           placeholder="Senha"
           onChange={handleChange}
+          value={form.senha}
           required
           className="cadastro-input"
         />
@@ -103,6 +139,7 @@ function Cadastro() {
               name="cnpj"
               placeholder="CNPJ"
               onChange={handleChange}
+              value={form.cnpj}
               required
               className="cadastro-input"
             />
@@ -110,12 +147,14 @@ function Cadastro() {
               name="telefone"
               placeholder="Telefone"
               onChange={handleChange}
+              value={form.telefone}
               className="cadastro-input"
             />
             <input
               name="endereco"
               placeholder="Endereço"
               onChange={handleChange}
+              value={form.endereco}
               className="cadastro-input"
             />
           </>
@@ -127,6 +166,7 @@ function Cadastro() {
               name="cpf"
               placeholder="CPF"
               onChange={handleChange}
+              value={form.cpf}
               required
               className="cadastro-input"
             />
@@ -134,23 +174,35 @@ function Cadastro() {
               name="local_feira"
               placeholder="Local da Feira"
               onChange={handleChange}
+              value={form.local_feira}
               className="cadastro-input"
             />
             <input
               name="telefone"
               placeholder="Telefone"
               onChange={handleChange}
+              value={form.telefone}
               className="cadastro-input"
             />
           </>
         )}
 
         <label>
-          <input type="checkbox" name="whatsapp" onChange={handleChange} />
+          <input
+            type="checkbox"
+            name="whatsapp"
+            checked={form.whatsapp}
+            onChange={handleChange}
+          />
           Usa WhatsApp
         </label>
         <label>
-          <input type="checkbox" name="receber_info" onChange={handleChange} />
+          <input
+            type="checkbox"
+            name="receber_info"
+            checked={form.receber_info}
+            onChange={handleChange}
+          />
           Receber informações
         </label>
 
