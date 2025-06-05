@@ -93,7 +93,7 @@ function HistoricoPagamentos() {
                   <button
                     onClick={() =>
                       window.open(
-                        `${import.meta.env.VITE_API_URL}/pagamento/comprovante/${p.id}`,
+                        `https://iaca-backend.onrender.com/api/pagamento/comprovante/${p.id}`,
                         "_blank"
                       )
                     }
@@ -103,7 +103,7 @@ function HistoricoPagamentos() {
                   <button
                     onClick={() =>
                       window.open(
-                        `${import.meta.env.VITE_API_URL}/pagamento/nota-fiscal/${p.id}`,
+                        `https://iaca-backend.onrender.com/api/pagamento/nota-fiscal/${p.id}`,
                         "_blank"
                       )
                     }
