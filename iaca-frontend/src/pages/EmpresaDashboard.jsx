@@ -30,7 +30,7 @@ function EmpresaDashboard() {
 
     const fetchPontos = async () => {
       try {
-        const response = await api.get("/empresa/pontos", {
+        const response = await api.get("https://iaca-backend.onrender.com/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
