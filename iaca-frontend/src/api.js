@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://iaca-backend.onrender.com/api",
+  baseURL: "https://iaca-backend.onrender.com/api",
 });
+
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
