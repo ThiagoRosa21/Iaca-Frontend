@@ -22,8 +22,10 @@ function Login({ setUser }) {
       form.append("username", email);
       form.append("password", senha);
 
-      const response = await api.post("/auth/login", form); // 🔒 usa HTTPS se configurado no .env
+      const response = await api.post("/auth/login", form); 
       const token = response.data.access_token;
+
+      if (!token) throw new Error("Token ausente");
 
       const [, payload] = token.split(".");
       const decoded = JSON.parse(atob(payload));
@@ -35,7 +37,8 @@ function Login({ setUser }) {
 
       navigate("/dashboard");
     } catch (err) {
-      alert("Login falhou. Verifique suas credenciais.");
+      console.error("Erro ao fazer login:", err);
+      alert("Login falhou. Verifique e-mail e senha.");
     }
   };
 
