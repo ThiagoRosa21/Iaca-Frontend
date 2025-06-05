@@ -9,13 +9,24 @@ const api = axios.create({
 
 function HistoricoDescartes() {
   const [descartes, setDescartes] = useState([]);
-  const token = localStorage.getItem("token");
+  const [erro, setErro] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  const vendedorId = (() => {
+  if (!token) {
+    navigate("/login");
+    return null;
+  }
+
+  let vendedorId;
+  try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.id;
-  })();
+    vendedorId = payload.id;
+  } catch (e) {
+    alert("Sessão inválida. Faça login novamente.");
+    navigate("/login");
+    return null;
+  }
 
   useEffect(() => {
     const fetchDescartes = async () => {
@@ -25,12 +36,18 @@ function HistoricoDescartes() {
         });
         setDescartes(response.data);
       } catch (err) {
-        console.error("Erro ao buscar descartes:", err);
+        if (err.response?.status === 401) {
+          alert("Sessão expirada. Faça login novamente.");
+          navigate("/login");
+        } else {
+          setErro("Erro ao buscar descartes.");
+          console.error("Erro ao buscar descartes:", err);
+        }
       }
     };
 
     fetchDescartes();
-  }, [vendedorId, token]);
+  }, [vendedorId, token, navigate]);
 
   return (
     <div className="dashboard-container">
@@ -40,6 +57,8 @@ function HistoricoDescartes() {
         <button className="mapa-voltar-button" onClick={() => navigate("/dashboard")}>
           ⬅ Voltar ao Início
         </button>
+
+        {erro && <p style={{ color: "red" }}>{erro}</p>}
 
         {descartes.length === 0 ? (
           <p>Nenhum descarte encontrado.</p>
