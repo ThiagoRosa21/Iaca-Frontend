@@ -80,6 +80,7 @@ export default function Welcome() {
             flex: 1 1 100%;
             max-width: 100%;
             aspect-ratio: 16 / 9;
+            min-height: 600px;
           }
 
           .hero-text {
@@ -188,7 +189,7 @@ export default function Welcome() {
         <section style={{ backgroundColor: "#4e0a24", color: "#fff", padding: "2rem 0", top: "40px" }}>
        
           <div className="content-wrapper" style={{ animation: "fadeIn 1s ease-in-out" }}>
-            <br></br><br></br><br></br><br></br>
+            <br></br><br></br><br></br><br></br><br></br><br></br>
             <div
               className="hero"
               style={{
@@ -207,7 +208,6 @@ export default function Welcome() {
                 style={{
                   flex: "1 1 500px",
                   maxWidth: "600px",
-                  minHeight:"400px",
                   aspectRatio: "16 / 9",
                   overflow: "hidden",
                   borderRadius: "12px",
@@ -247,6 +247,23 @@ export default function Welcome() {
                   }}
                 >
                   FAZER CADASTRO
+                </button>
+                <br></br><br></br>
+                <button
+                  onClick={() => window.location.href = "https://amazonhacking.com.br/pt/solutions?query=Ia%C3%A7%C3%A1"}
+                  style={{
+                    backgroundColor: "#fcd116",
+                    color: "#fff",
+                    padding: "0.7rem 1.5rem",
+                    fontSize: "1rem",
+                    borderRadius: "6px",
+                    fontWeight: "bold",
+                    border: "none",
+                    cursor: "pointer",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Vote no Iaçá
                 </button>
               </div>
             </div>
