@@ -30,7 +30,7 @@ function CompraPonto() {
   const handlePagamento = async () => {
     try {
       const response = await api.post(
-        "/api/pagamento/pagar",
+        "https://iaca-backend.onrender.com/api/pagamento/pagar",
         {
           empresa_id: empresaId,
           valor_centavos: Math.round(resumo.valor_estimado_total * 100),
