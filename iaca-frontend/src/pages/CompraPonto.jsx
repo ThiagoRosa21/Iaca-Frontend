@@ -15,7 +15,7 @@ function CompraPonto() {
   useEffect(() => {
     const fetchResumo = async () => {
       try {
-        const response = await api.get(`/api/descarte/ponto/${pontoId}/resumo`, {
+        const response = await api.get(`https://iaca-backend.onrender.com/api/descarte/ponto/${pontoId}/resumo`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setResumo(response.data);
