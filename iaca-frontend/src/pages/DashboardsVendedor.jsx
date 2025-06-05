@@ -80,7 +80,7 @@ function Dashboards_Vendedor() {
 
     const fetchPontos = async () => {
       try {
-        const response = await api.get("/empresa/pontos", {
+        const response = await api.get("https://iaca-backend.onrender.com/api/empresa/pontos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPontos(response.data);
