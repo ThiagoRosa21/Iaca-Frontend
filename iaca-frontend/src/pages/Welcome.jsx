@@ -212,7 +212,7 @@ export default function Welcome() {
                   overflow: "hidden",
                   borderRadius: "12px",
                 }}
-              ><br></br><br></br><br></br><br></br><br></br><br></br>
+              ><br></br><br></br><br></br><br></br><br></br>
                 <iframe
                   style={{
                     width: "100%",
