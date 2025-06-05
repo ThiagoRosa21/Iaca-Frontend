@@ -207,6 +207,7 @@ export default function Welcome() {
                 style={{
                   flex: "1 1 500px",
                   maxWidth: "600px",
+                  minHeight:"400px",
                   aspectRatio: "16 / 9",
                   overflow: "hidden",
                   borderRadius: "12px",
