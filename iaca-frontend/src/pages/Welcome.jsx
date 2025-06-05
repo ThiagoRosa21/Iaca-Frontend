@@ -190,7 +190,7 @@ export default function Welcome() {
         <section style={{ backgroundColor: "#4e0a24", color: "#fff", padding: "2rem 0", top: "100px" }}>
        
           <div className="content-wrapper" style={{ animation: "fadeIn 1s ease-in-out" }}>
-            <br></br><br></br><br></br><br></br><br></br><br></br>
+            <br></br><br></br><br></br><br></br><br></br><br></br><br></br>
             <div
               className="hero"
               style={{
