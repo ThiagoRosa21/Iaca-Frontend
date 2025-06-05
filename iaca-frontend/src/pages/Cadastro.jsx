@@ -52,7 +52,7 @@ function Cadastro() {
           };
 
     try {
-      await api.post("/api/auth/register", {
+      await api.post("/auth/register", {
         tipo,
         dados,
       });
